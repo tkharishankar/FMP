@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fmp/login/login_api.dart';
 import 'package:fmp/login/login_viewmodel.dart';
-import 'package:fmp/login/model/login_request.dart';
+import 'package:fmp/login/model/login_response.dart';
+import 'package:fmp/projects/projects_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -12,24 +13,18 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  var loginViewmodel = LoginViewmodel(apiFactory: LoginApi());
+  var loginViewmodel = LoginViewmodel(loginApi: LoginApiImpl());
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  Future doLogin() async {
-    LoginReq loginReq = LoginReq(
-        username: usernameController.text.trim(),
-        password: passwordController.text.trim());
-    var res = await loginViewmodel.getAccessToken(loginReq);
-    if (kDebugMode) {
-      print('${res.access!}${res.refresh}');
-    }
+  Future<LoginResp?> doLogin() async {
+    return await loginViewmodel.getAccessToken(
+        usernameController.text.trim(), passwordController.text.trim());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
@@ -61,12 +56,18 @@ class _LoginViewState extends State<LoginView> {
               if (kDebugMode) {
                 print('Button clicked');
               }
-              doLogin();
+              doLogin().whenComplete(() => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProjectsView()),
+                    ),
+                  });
             },
             child: const Text('Login'),
           ),
         ),
       ],
-    ));
+    );
   }
 }

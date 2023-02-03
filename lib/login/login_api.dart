@@ -9,11 +9,11 @@ import 'package:http/http.dart' as http;
 import 'model/login_request.dart';
 import 'model/login_response.dart';
 
-class LoginApi extends ApiFactory with AppPrefs {
+class LoginApiImpl extends LoginApi with AppPrefs {
   @override
   Future<LoginResp> getAccessToken(LoginReq loginReq) async {
     try {
-      var url = "http://10.39.1.83:8000/api/users/token/";
+      var url = "http://192.168.1.14:8000/api/users/token/";
       http.Response response = await http.post(Uri.parse(url),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
