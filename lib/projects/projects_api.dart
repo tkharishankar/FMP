@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:fmp/abstract_api_factory.dart';
 import 'package:fmp/local/share_preference.dart';
 import 'package:fmp/projects/model/project_response.dart';
@@ -17,10 +18,9 @@ class ProjectApiImpl extends ProjectApi with AppPrefs {
       });
       if (response.statusCode == 200) {
         print(response.body);
-        Iterable iterable = json.decode(response.body);
-        List<Project> projects = List<Project>.from(
-            iterable.map((model) => Project.fromJson(model)));
-        return projects;
+        var projects = parseProject(response.body);
+        print(projects);
+        return compute(parseProject, response.body);
       } else {
         throw Exception("Api Error - project failed");
       }
@@ -28,4 +28,10 @@ class ProjectApiImpl extends ProjectApi with AppPrefs {
       throw Exception("Api Error - server error");
     }
   }
+}
+
+List<Project> parseProject(String responseBody) {
+  final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+
+  return parsed.map<Project>((json) => Project.fromJson(json)).toList();
 }

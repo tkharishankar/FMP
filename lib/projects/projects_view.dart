@@ -30,15 +30,23 @@ class _ProjectsViewState extends State<ProjectsView> {
           } else {
             var projects = snapshot.data;
             return ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: projects?.length,
-              itemBuilder: (BuildContext context, int index) {
-                return SizedBox(
-                  height: 100,
-                  child: Center(child: Text('${projects?[index].title}')),
-                );
-              },
-            );
+                shrinkWrap: true,
+                itemCount: projects?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    color: Colors.blue,
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(15),
+                    alignment: Alignment.center,
+                    child: Text(
+                      projects![index].description!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  );
+                });
           }
         });
   }
