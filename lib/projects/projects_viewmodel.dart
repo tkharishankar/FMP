@@ -9,8 +9,12 @@ class ProjectViewmodel {
   ProjectViewmodel({this.projectApi});
 
   Future<List<Project>?> getProject() async {
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      if (kDebugMode) {
+        print("object");
+      }
+    });
     var result = await projectApi?.getProjects();
-    print(result);
     return result;
   }
 }

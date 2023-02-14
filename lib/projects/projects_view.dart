@@ -21,33 +21,52 @@ class _ProjectsViewState extends State<ProjectsView> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Project>?>(
-        future: projectViewmodel.getProject(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<Project>?> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else {
-            var projects = snapshot.data;
-            return ListView.builder(
-                shrinkWrap: true,
-                itemCount: projects?.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    color: Colors.blue,
-                    margin: const EdgeInsets.all(10),
-                    padding: const EdgeInsets.all(15),
-                    alignment: Alignment.center,
-                    child: Text(
-                      projects![index].description!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                  );
-                });
-          }
-        });
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Projects"),
+      ),
+      body: SizedBox(
+        height: double.infinity,
+        width: double.infinity,
+        child: projectListView(projectViewmodel),
+      ),
+    );
   }
+}
+
+projectListView(ProjectViewmodel projectViewmodel) {
+  return FutureBuilder<List<Project>?>(
+      future: projectViewmodel.getProject(),
+      builder: (BuildContext context, AsyncSnapshot<List<Project>?> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 60.0,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        } else {
+          var projects = snapshot.data;
+          return ListView.builder(
+              shrinkWrap: true,
+              itemCount: projects?.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  padding: const EdgeInsets.only(
+                      left: 8, right: 8, top: 4, bottom: 4),
+                  alignment: Alignment.center,
+                  child: Card(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          title: Text(projects![index].title.toString()),
+                          subtitle:
+                              Text(projects[index].description.toString()),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              });
+        }
+      });
 }

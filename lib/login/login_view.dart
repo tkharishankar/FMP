@@ -57,11 +57,11 @@ class _LoginViewState extends State<LoginView> {
                 print('Button clicked');
               }
               doLogin().whenComplete(() => {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ProjectsView()),
-                    ),
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProjectsView(),
+                        )),
                   });
             },
             child: const Text('Login'),

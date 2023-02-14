@@ -17,9 +17,6 @@ class ProjectApiImpl extends ProjectApi with AppPrefs {
         'Authorization': 'Bearer $accessToken'
       });
       if (response.statusCode == 200) {
-        print(response.body);
-        var projects = parseProject(response.body);
-        print(projects);
         return compute(parseProject, response.body);
       } else {
         throw Exception("Api Error - project failed");
@@ -32,6 +29,5 @@ class ProjectApiImpl extends ProjectApi with AppPrefs {
 
 List<Project> parseProject(String responseBody) {
   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-
   return parsed.map<Project>((json) => Project.fromJson(json)).toList();
 }
