@@ -16,6 +16,14 @@ class _LoginViewState extends State<LoginView> {
   var loginViewmodel = LoginViewmodel(loginApi: LoginApiImpl());
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  var errorMessage = "";
+
+  var isError = false;
+  void updateError(bool state) {
+    setState(() {
+      isError = state;
+    });
+  }
 
   Future<LoginResp?> doLogin() async {
     return await loginViewmodel.getAccessToken(
@@ -42,6 +50,9 @@ class _LoginViewState extends State<LoginView> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TextField(
             controller: passwordController,
+            obscureText: true,
+            autocorrect: false,
+            enableSuggestions: false,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Password',
@@ -49,25 +60,51 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: ElevatedButton(
-            onPressed: () {
-              if (kDebugMode) {
-                print('Button clicked');
-              }
-              doLogin().whenComplete(() => {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProjectsView(),
-                        )),
-                  });
-            },
-            child: const Text('Login'),
-          ),
-        ),
+        actionButton(context),
+        Visibility(
+            visible: isError,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                errorMessage,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.redAccent),
+              ),
+            ))
       ],
+    );
+  }
+
+  Padding actionButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(fixedSize: const Size(150, 55)),
+        onPressed: () {
+          if (kDebugMode) {
+            print('Button clicked');
+          }
+          if (usernameController.text.trim().isEmpty) {
+            updateError(true);
+            errorMessage = "Username can't be empty";
+          } else if (passwordController.text.trim().isEmpty) {
+            updateError(true);
+            errorMessage = "Password can't be empty";
+          } else {
+            updateError(false);
+            doLogin().whenComplete(() => {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProjectsView(),
+                      )),
+                });
+          }
+        },
+        child: const Text('Login'),
+      ),
     );
   }
 }
